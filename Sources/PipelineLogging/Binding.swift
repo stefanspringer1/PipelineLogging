@@ -62,7 +62,7 @@ public struct ExecutionEventProcessorForLogger: ExecutionEventProcessor {
     /// The the severity i.e. the worst message type.
     var severity: InfoType { severityTracker.value }
     
-    init(
+    public init(
         withMetaDataInfo metadataInfo: String,
         withMetaDataInfoForUserInteraction metadataInfoForUserInteraction: String? = nil,
         logger: any Logger<ExecutionLogEntry,InfoType>,
@@ -82,6 +82,29 @@ public struct ExecutionEventProcessorForLogger: ExecutionEventProcessor {
             return
         }
         logger.log(ExecutionLogEntry(executionEvent: executionEvent, metadataInfo: metadataInfo, excutionInfoFormat: excutionInfoFormat), withMode: executionEvent.type)
+    }
+    
+}
+
+/// A logger that just prints to the standard output.
+public final class ExecutionLogEntryPrinter: ConcurrentLogger<ExecutionLogEntry,InfoType>, @unchecked Sendable {
+    
+    public typealias Message = ExecutionLogEntry
+    public typealias Mode = InfoType
+    
+    private let printLogger: PrintLogger<ExecutionLogEntry,PrintMode>
+    
+    public init(errorsToStandard: Bool = false) {
+        printLogger = PrintLogger(errorsToStandard: errorsToStandard)
+    }
+    
+    override public func log(_ message: ExecutionLogEntry, withMode mode: InfoType? = nil) {
+        if let mode, mode >= .error {
+            printLogger.log(message, withMode: .error)
+        } else {
+            printLogger.log(message, withMode: .standard)
+        }
+        
     }
     
 }
