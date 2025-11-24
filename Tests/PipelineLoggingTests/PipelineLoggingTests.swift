@@ -39,7 +39,7 @@ import PipelineLogging
         
         step1(during: execution)
         
-        try logger.close()
+        try execution.closeEventProcessing()
         
         #expect(collectingLogger.getMessages().map{ $0.description }.joined(separator: "\n") == """
             Test: {progress} beginning step step1(during:)@PipelineLoggingTests

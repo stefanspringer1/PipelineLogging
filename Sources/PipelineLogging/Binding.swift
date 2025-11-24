@@ -62,6 +62,11 @@ public struct ExecutionEventProcessorForLogger: ExecutionEventProcessor {
     /// The the severity i.e. the worst message type.
     var severity: InfoType { severityTracker.value }
     
+    /// This closes all loggers.
+    public func closeEventProcessing() throws {
+        try logger.close()
+    }
+    
     public init(
         withMetaDataInfo metadataInfo: String,
         withMetaDataInfoForUserInteraction metadataInfoForUserInteraction: String? = nil,
