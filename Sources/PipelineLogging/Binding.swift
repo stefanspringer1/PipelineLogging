@@ -92,7 +92,7 @@ public struct ExecutionEventProcessorForLogger: ExecutionEventProcessor {
 }
 
 /// A logger that just prints to the standard output.
-public final class ExecutionLogEntryPrinter: ConcurrentLogger<ExecutionLogEntry,InfoType>, @unchecked Sendable {
+public final class ExecutionLogEntryPrinter: Logger, @unchecked Sendable {
     
     public typealias Message = ExecutionLogEntry
     public typealias Mode = InfoType
@@ -103,13 +103,17 @@ public final class ExecutionLogEntryPrinter: ConcurrentLogger<ExecutionLogEntry,
         printLogger = PrintLogger(errorsToStandard: errorsToStandard)
     }
     
-    override public func log(_ message: ExecutionLogEntry, withMode mode: InfoType? = nil) {
+    public func log(_ message: ExecutionLogEntry, withMode mode: InfoType? = nil) {
         if let mode, mode >= .error {
             printLogger.log(message, withMode: .error)
         } else {
             printLogger.log(message, withMode: .standard)
         }
         
+    }
+    
+    public func close() throws {
+        try printLogger.close()
     }
     
 }
