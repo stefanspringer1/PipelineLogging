@@ -1,5 +1,6 @@
 import Foundation
 import Pipeline
+import Logging
 
 /// Keeps track of the severity i.e. the worst message type.
 public final class SeverityTracker: @unchecked Sendable {
@@ -33,12 +34,27 @@ public final class SeverityTracker: @unchecked Sendable {
     
 }
 
+public struct ExecutionLogEntry: Sendable, CustomStringConvertible {
+    
+    let executionEvent: ExecutionEvent
+    let metadataInfo: String
+    let excutionInfoFormat: ExecutionInfoFormat?
+    
+    public var description: String {
+        if let excutionInfoFormat {
+            executionEvent.description(format: excutionInfoFormat, withMetaDataInfo: metadataInfo)
+        } else {
+            executionEvent.description(withMetaDataInfo: metadataInfo)
+        }
+    }
+}
+
 public struct ExecutionEventProcessorForLogger: ExecutionEventProcessor {
     
     public let metadataInfo: String
     public let metadataInfoForUserInteraction: String
     
-    private let logger: Logger
+    private let logger: any Logger<ExecutionLogEntry,InfoType>
     private let severityTracker = SeverityTracker()
     private let minimalInfoType: InfoType?
     private let excutionInfoFormat: ExecutionInfoFormat?
@@ -49,7 +65,7 @@ public struct ExecutionEventProcessorForLogger: ExecutionEventProcessor {
     init(
         withMetaDataInfo metadataInfo: String,
         withMetaDataInfoForUserInteraction metadataInfoForUserInteraction: String? = nil,
-        logger: Logger,
+        logger: any Logger<ExecutionLogEntry,InfoType>,
         withMinimalInfoType minimalInfoType: InfoType? = nil,
         excutionInfoFormat: ExecutionInfoFormat? = nil
     ) {
@@ -65,11 +81,7 @@ public struct ExecutionEventProcessorForLogger: ExecutionEventProcessor {
         if let minimalInfoType, executionEvent.type < minimalInfoType {
             return
         }
-        if let excutionInfoFormat {
-            logger.log(executionEvent.description(format: excutionInfoFormat, withMetaDataInfo: metadataInfo))
-        } else {
-            logger.log(executionEvent.description(withMetaDataInfo: metadataInfo))
-        }
+        logger.log(ExecutionLogEntry(executionEvent: executionEvent, metadataInfo: metadataInfo, excutionInfoFormat: excutionInfoFormat), withMode: executionEvent.type)
     }
     
 }
