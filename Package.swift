@@ -19,7 +19,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/stefanspringer1/Pipeline.git", from: "1.0.33"),
+        .package(url: "https://github.com/stefanspringer1/Pipeline.git", from: "1.0.34"),
         .package(url: "https://github.com/stefanspringer1/Logging.git", from: "0.0.11"),
     ],
     targets: [
