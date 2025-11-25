@@ -20,7 +20,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/stefanspringer1/Pipeline.git", from: "1.0.34"),
-        .package(url: "https://github.com/stefanspringer1/Logging.git", from: "0.0.11"),
+        .package(url: "https://github.com/stefanspringer1/BasicLogging.git", from: "0.0.13"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -29,7 +29,7 @@ let package = Package(
             name: "PipelineLogging",
             dependencies: [
                 "Pipeline",
-                "Logging",
+                "BasicLogging",
             ]
         ),
         .testTarget(

@@ -1,6 +1,6 @@
 import Foundation
 import Pipeline
-import Logging
+import BasicLogging
 
 /// Keeps track of the severity i.e. the worst message type.
 public final class SeverityTracker: @unchecked Sendable {
